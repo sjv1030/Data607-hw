@@ -1,0 +1,23 @@
+---
+title: "Silverio_Vasquez_Movie"
+author: "Silverio Vasquez"
+date: "September 10, 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Top Movies
+
+Below is the database of top 5 movies with rank and other details:
+
+```{r movies}
+library(RMySQL)
+con <- dbConnect(MySQL(),user='CUNY_SPS',password='',
+                 host='localhost',dbname='tb')
+rs<- dbSendQuery(con, "select * from tb_hw ORDER BY rating DESC")
+movies <- fetch(rs) 
+View(movies)
+```
