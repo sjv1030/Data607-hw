@@ -1,0 +1,80 @@
+---
+title: "Silverio_Vasquez_Hw3"
+author: "Silverio Vasquez"
+date: "September 17, 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 3
+
+
+```{r Q3}
+library(stringr)
+
+raw.data <- "555-1239Moe Szyslak(636) 555-0113Burns, C. Montgomery555-6542Rev. Timothy Lovejoy555 8904Ned Flanders636-555-3226Simpson, Homer5553642Dr. Julius Hibbert"
+
+name <- unlist(str_extract_all(raw.data, "[[:alpha:]., ]{2,}"))
+
+phone <- unlist(str_extract_all(raw.data, "\\(?(\\d{3})?\\)?(-|)?\\d{3}(-|)?\\d{4}"))
+```
+
+1 - convert to first_name and last_name
+```{r Q3_1}
+name_wo_comma <- unlist(name[!str_detect(name,",")])
+
+name_wo_pref <- name
+for (pref in c("Mr.","Ms.","Mrs.","Dr.","Rev.")){
+        name_wo_pref <- unlist(str_trim(str_replace_all(name_wo_pref,pref,"")))
+}
+name_w_comma <- unlist(str_split(name_wo_pref[str_detect(name_wo_pref,",")],","))
+
+name1 <- str_c(name_w_comma[2],name_w_comma[1],sep="_")
+name2 <- str_c(name_w_comma[4],name_w_comma[3],sep="_")
+
+name_wo_comma <- unlist(name_wo_pref[!str_detect(name_wo_pref,",")])
+name_wo_comma <- unlist(str_replace_all(name_wo_comma," ","_"))
+
+ex1_ans <- c(name_wo_comma,str_trim(name1),str_trim(name2))
+print(ex1_ans)
+```
+
+
+2 - logical vector for titles
+```{r Q3_2}
+ex2_ans <- unlist(str_detect(name,"Dr.")) | unlist(str_detect(name,"Rev."))
+print(ex2_ans)
+```
+
+3 - logical vector for a second name. 
+
+Assumption - first name and last name will only be separated by one space. So, if there's a middle name, then there will be more than one space.
+```{r Q3_3}
+ex3_ans <- as.logical(str_count(ex1_ans,"\\s"))
+print(ex3_ans)
+```
+
+## Question 4
+a. The pattern this describes is any number before the end of a sentence signaled by a "\$". For example "25$" will yield "25".
+
+b. The pattern this describes is any word that's four lower-case letters or less. For example, "Silo vase Case base1" will yield only "vase"
+
+c. This doesn't describe any pattern. first ".*" will repeat the entire string inputted but "?" will turn everything into empty quotes. 
+
+d. This describes a very specific pattern where there needs to be at least two digits followed by "/" then only two digits, followed by "/" then followed by at least four digits.
+
+e. Not really sure what this pattern is because I tried it on different strings and kept getting nothing.
+
+## Question 9
+```{r Q9}
+q9 <- paste0("clcopCow1zmstc0d87wnkig7OvdicpNuggvhryn92Gjuwczi8hqrfpRxs5Aj5dwpn0Tanw","Uwisdij7Lj8kpf03AT5Idr3coc0bt7yczjatOaootj55t3Nj3ne6c4Sfek.r1w1YwwojigO",
+"d6vrfUrbz2.2bkAnbhzgv4R9i05zEcrop.wAgnb.SqoU65fPa1otfb7wEm24k6t3sR9zqe5",
+"fy89n6Nd5t9kc4fE905gmc4Rgxo5nhDk!gr")
+q9 <- str_conv(q9,"UTF-8")
+q9_msg <- unlist(str_extract_all(q9,"[[:upper:][:punct:]]"))
+print(q9_msg)
+```
+Question 9 --> "CONGRATULATIONS. YOU ARE. A. SUPERNERD!"
