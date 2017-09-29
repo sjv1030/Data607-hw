@@ -1,0 +1,82 @@
+---
+title: "SVasquez_HW4"
+author: "Silverio Vasquez"
+date: "September 29, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(curl)
+```
+
+## Get Data and Tidy Up
+
+Below code brings in a "wide" dataset from a CSV file in Github, drops row if there's an 'na' in the second column, and fills empty cells in column 1 with prior values. 
+
+```{r import}
+flights <- read_csv(curl("https://raw.githubusercontent.com/sjv1030/Data607-hw/master/flights.csv"))
+
+head(flights)
+flights <- flights %>% drop_na(X2) %>% fill(X1)
+```
+
+Below code "gathers" the data by city and then spreads it by status ("delayed"" or "on_time""). Mutate adds a total column ("tot"") that's used to calculate delayed flights as a percent of total flights (column "pct"). All of this converts the data set from a "wide" format to a "long" format.
+
+```{r tidyup}
+df <- flights %>% gather('city','n',3:7) %>% spread(X2,n)
+names(df) <- c('airline','city','delayed','on_time')
+
+df <- df %>% mutate(tot = delayed + on_time)
+df <- df %>% mutate(pct = round(delayed/tot,4) * 100)
+
+head(df,10)
+```
+
+## Interesting Factoids
+
+Which airline had the largest percent of delays and to which city?
+
+
+```{r f1}
+df[which.max(df$pct),]
+```
+
+
+Which airline had the lowest percent of delays and to which city?
+
+
+```{r f2}
+df[which.min(df$pct),]
+```
+
+Show average percent of delays by airline:
+
+
+```{r f3}
+f3 <- df %>% group_by(airline) %>% summarise(avg=mean(pct)) %>% arrange(desc(avg))
+ggplot(f3,aes(airline,avg))+ggtitle('Average Percent of Delays by Airline')+
+        geom_col(fill="#0072B2",colour="black")+theme_minimal()+xlab('')+ylab('')
+```
+
+Show max percent of delays by airline:
+
+
+```{r f4}
+f4 <- df %>% group_by(airline) %>% summarise(high=max(pct)) %>% arrange(desc(high))
+ggplot(f4,aes(airline,high))+ggtitle('Max Percent of Delays by Airline')+
+        geom_col(fill="#0072B2",colour="black")+theme_minimal()+xlab('')+ylab('')
+```
+
+Show max percent of delays by city:
+
+
+```{r f5}
+f5 <- df %>% group_by(city) %>% summarise(high=max(pct)) %>% arrange(desc(high))
+ggplot(f5,aes(city,high))+ggtitle('Max Percent of Delays by City')+
+        geom_col(fill="#0072B2",colour="black")+theme_minimal()+xlab('')+ylab('')
+```
+
+
+Given the data, we can conclude that Phoenix is the best airport to have a layover in and San Fran is the worst. Additionally, it looks like Alaska airlines is a lot more reliable than AM West.
