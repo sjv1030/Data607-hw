@@ -1,0 +1,6 @@
+{
+"books":[
+    { "title":"Investments", "authors":"Bodi, Kane, Marcus", "attributes":"Finance 101, comprehensive, finance bible, textbook"},
+    { "title":"The Quants", "authors":"Scott Patterson", "attributes":"quant, quantitative analyst, page turner, well written, algos, Wall Street, finance"},
+    { "title":"When Genius Failed", "authors":"Roger Lowenstein", "attributes":"Hedge Funds, finance, Wall Street, quants, crisis, Long Term Capital Management, liquidity, bailout, genius"}
+]}

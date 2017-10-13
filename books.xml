@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<books>
+  <book category="textbook">
+    <title>Investments</title>
+    <authors>Bodi, Kane, Marcus</authors>
+    <attributes>Finance 101, comprehensive, finance bible, textbook</attributes>
+  </book>
+  <book category="paperback">
+    <title lang="en">The Quants</title>
+    <author>Scott Patterson</author>
+    <attributes>quant, quantitative analyst, page turner, well written, algos, Wall Street, finance</attributes>
+  </book>
+  <book category="paperback">
+    <title lang="en">When Genius Failed</title>
+    <author>Roger Lowenstein</author>
+    <attributes>Hedge Funds, finance, Wall Street, quants, crisis, Long Term Capital Management, liquidity, bailout, genius</attributes>
+  </book>
+</books>
