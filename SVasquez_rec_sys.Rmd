@@ -1,0 +1,47 @@
+---
+title: "YouTube-RecommenderSystem"
+author: "Silverio Vasquez"
+date: "November 8, 2017"
+output:
+  prettydoc::html_pretty:
+    theme: tactile
+    highlight: github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# YouTube - Recommender System
+
+YouTube users go to the website for videos of all kind (e.g., music, education, etc).
+
+## Scenario Analysis
+
+#### Target Users
+
+YouTube targets everyone globally with access to the internet and an interest in a video.
+
+#### Goals
+
+The goal is to enable a user to 1) post a video and/or 2) watch a video. Ideally, the process of finding a desired video will be seamless, and similar videos will be recommended to keep the user on the website (this helps increase YouTube's business profitability).
+
+#### Help
+
+YouTube helps its users accomplish their goals by 1) allowing a user to subscribe to a particular publisher/channel to get notifications of new uploaded videos; 2) recommending videos that might be relevant based on the latest video seen; 3) combining similar music videos together into a playlist to avoid having to manually select the next song/video
+
+##### Scenario Design Twice
+
+It makes perfect sense to have scenario design twice given that a user can be either 1) someone looking to publish a video, or 2) a user looking for a specific video.
+
+## Reverse Engineer
+
+Google open-sourced the technology behind YouTube's recommendation system, which is based on TensorFlow using neural networks. At a simplistic level, there are two neural networks - one for videos uploaded/searched/viewed and another for ranking (a user can rank a video as good or bad). While complex, the process has aspects common to other recommendation systems such as, normalizing data, weighting features, choosing a classification or regression model, etc. 
+
+(source: http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf)
+
+## Suggestion
+
+YouTube currently doesn't distinguish between a video officially uploaded by an organization and a video from another independent user. For example, sometimes music videos appear in search results where the video is a recording from an individual's cell phone. Another example is an educational video from John/Jane Doe versus one from MIT/Stanford/etc. It would be nice if YouTube gave more weight in the ranking of "official" videos uploaded by organizations.
+
+
