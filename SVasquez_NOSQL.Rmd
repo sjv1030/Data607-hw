@@ -1,0 +1,106 @@
+---
+title: "MongoDB-Trial"
+author: "Silverio Vasquez"
+date: "November 12, 2017"
+output:
+  prettydoc::html_pretty:
+    theme: tactile
+    highlight: github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(RMySQL)
+library(mongolite)
+library(ggplot2)
+```
+
+# From MySQL to MongoDB
+
+## SQL Script to create movie database
+
+Create movie database locally using this SQL [file](https://github.com/sjv1030/Data607-hw/blob/master/tb_hw.sql)
+
+Then extract movies database from MySQL into a dataframe and print out top and bottom to confirm data came in OK.
+
+```{r MySQL}
+# Connect to MySQL database
+con <- dbConnect(MySQL(),user='CUNY_SPS',password='',
+                 host='localhost',dbname='tb')
+
+# Download all data in database
+rs<- dbSendQuery(con, "select * from tb_hw ORDER BY rating DESC")
+
+# Store data in dataframe
+movies <- fetch(rs) 
+head(movies)
+tail(movies)
+```
+
+## Import movies data frame to MongoDB
+
+Inserting a dataframe from R into a MongoDB collection is supereasy thanks to the `mongolite` [package](https://cran.r-project.org/web/packages/mongolite/index.html) 
+
+```{r MongoDB}
+my_db <-  mongo(collection='movies', db="ratings")
+my_db$insert(movies)
+```
+
+Confirm data imported correctly:
+
+```{r confirm}
+my_db$count() == dim(movies)[1]
+```
+
+Check first record in MongoDB:
+
+```{r first-row}
+my_db$iterate()$one()
+```
+
+Export data from MongoDB to a data frame and confirm data frame matches the one uploaded:
+
+```{r identical}
+
+# return data from MongoDB into a tmp data frame
+tmp <- my_db$find()
+# test if two data frames are identical
+identical(movies,tmp)
+```
+
+## Query MongoDB
+
+Return all movies rated >3 from any user: 
+```{r top-5}
+top_5 <- my_db$distinct("movie", query = '{"rating":{"$gt":3}}')
+print(top_5)
+```
+
+Return all movies rated by user "sjv":
+```{r sjv}
+sjv <- my_db$find(query = '{"initials":"sjv"}')
+sjv
+```
+
+Return all movies created after year 2000:
+```{r 2000}
+post2000 <- my_db$distinct("movie",query = '{"year":{"$gt":2000}}')
+print(post2000)
+```
+
+## Aggregate data and plot
+
+Return average rating per movie and plot results:
+
+```{r avg-rating}
+avg_rating <- my_db$aggregate('[{"$group":{"_id":"$movie","average":{"$avg":"$rating"}}}]') 
+names(avg_rating) <- c("movie","average_rating") 
+ggplot(aes(movie,average_rating),data=avg_rating) + 
+        geom_col(fill="sky blue") + ggtitle("Average Rating per Movie") + theme_classic()
+```
+
+## Pros & Cons
+
+The pros of NOSQL are that developers don't have to worry about schemas, which can be time consuming to create if data connections are complex. NOSQL tends to be faster to retrieve data as well. 
+
+Some cons of NOSQL is the greater skill set needed to create/query NOSQL databases. Additionally, sometimes businesses want to keep/store the relationship between one item and another. For example, if I want to know how employees report to Bob, this could arguably be faster to query in a relational database.
